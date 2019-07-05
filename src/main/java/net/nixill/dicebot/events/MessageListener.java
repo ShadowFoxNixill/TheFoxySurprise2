@@ -44,22 +44,18 @@ public class MessageListener implements Consumer<MessageCreateEvent> {
         return chan.createMessage("Coming soon!");
       }
 
-      if (roll.equals("notify")) {
-        return chan.createMessage("Coming soon!");
-      }
-
       DCEntity rollEnt = ExpressionSplitter.parse(roll);
       Optional<User> usr = msg.getAuthor();
       String out = "";
       if (usr.isPresent()) {
-        out = usr.get().getMention();
+        out = usr.get().getMention() + ": ";
       } else {
-        out = "(no user)";
+        out = "(no user): ";
       }
 
-      out += "\nInput: " + rollEnt.toString();
+      out += "Input: `" + rollEnt.toString() + "`";
       if (rollEnt instanceof DCExpression) {
-        out += "\nResult: " + rollEnt.getValue().toString();
+        out += " / Result: " + rollEnt.getValue().toString();
       }
 
       return chan.createMessage(out);
