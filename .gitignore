@@ -1,0 +1,12 @@
+.settings/
+target/
+.classpath
+.project
+.vscode/
+.factorypath
+
+# keys.json will hold Discord API keys
+keys.json
+
+# config.json will hold specific configuration for a dicebot instance
+config.json
