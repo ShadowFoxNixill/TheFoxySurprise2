@@ -7,6 +7,7 @@ target/
 
 # keys.json will hold Discord API keys
 keys.json
+key.txt
 
 # config.json will hold specific configuration for a dicebot instance
 config.json
