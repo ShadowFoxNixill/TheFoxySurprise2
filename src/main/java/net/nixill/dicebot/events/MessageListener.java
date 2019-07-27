@@ -13,7 +13,8 @@ import reactor.core.publisher.Mono;
 
 public class MessageListener implements Consumer<MessageCreateEvent> {
   private static Pattern ptnRoll = Pattern.compile(
-      "(?:(f(?:ull)?)|(d(?:ebug)?))?(s(?:eed(?:ed)?)?)?(?:r(?:oll)?|dice)");
+      "(?:(f(?:ull)?)|(d(?:ebug)?))?(s(?:eed(?:ed)?)?)?(?:r(?:oll)?|dice)",
+      Pattern.CASE_INSENSITIVE);
   
   public void accept(MessageCreateEvent t) {
     Message msg = t.getMessage();

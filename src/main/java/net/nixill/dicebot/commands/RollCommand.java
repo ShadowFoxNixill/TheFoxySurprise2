@@ -7,10 +7,13 @@ import java.util.regex.Pattern;
 import discord4j.core.object.entity.Channel;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
+import net.nixill.dice.exception.DiceCalcException;
+import net.nixill.dice.exception.UserInputException;
 import net.nixill.dice.objects.DCEntity;
 import net.nixill.dice.objects.DCExpression;
+import net.nixill.dice.objects.DCList;
 import net.nixill.dice.parsing.ExpressionSplitter;
-import net.nixill.dice.parsing.UserInputException;
+import net.nixill.dicebot.App;
 
 public class RollCommand {
   private static Pattern ptnSeed = Pattern.compile("(\\d{1,19}) (.+)");
@@ -70,17 +73,44 @@ public class RollCommand {
     // Let's actually work this out
     try {
       DCEntity rollEnt = ExpressionSplitter.parse(args);
-      out += "Input: `" + rollEnt.toString() + "`";
-      if (rollEnt instanceof DCExpression) {
-        out += " / Result: " + rollEnt.getValue().toString();
+      DCEntity next = rollEnt;
+      out += "Input: ";
+      
+      // If the user made a calculation, give it to them as we saw it
+      // Which should be pretty similar to how they entered it
+      if (next instanceof DCExpression) {
+        out += "`" + next.toCode() + "` / Result: ";
+        next = rollEnt.getValue();
+      }
+      
+      // Now give them the result
+      // Let's bold the actual number cause it looks nicer
+      if (next instanceof DCList) {
+        String res = next.toString(2);
+        int space = res.indexOf(' ');
+        out += "**" + res.substring(0, space) + "**"
+            + res.substring(space);
+      } else {
+        out += "**" + next.toString() + "**";
       }
     } catch (UserInputException ex) {
       out += "Error: " + ex.getMessage() + "\nAt position: "
           + ex.getPosition();
+      if (App.isDebug()) {
+        ex.printStackTrace();
+      }
+    } catch (DiceCalcException ex) {
+      out += "Error: " + ex.getMessage();
+      if (App.isDebug()) {
+        ex.printStackTrace();
+      }
     } catch (Exception ex) {
       out += "Error: " + ex.getMessage()
           + "\nError reporting is not enabled yet. However, you can still raise"
           + " an issue at <https://github.com/ShadowFoxNixill/TheFoxySurprise2/issues>.";
+      if (App.isDebug()) {
+        ex.printStackTrace();
+      }
     }
     
     return out;
