@@ -27,10 +27,10 @@ public class Updater {
   
   private static String verTableMake = "CREATE TABLE IF NOT EXISTS version ("
       + "name TEXT PRIMARY KEY ON CONFLICT IGNORE, value INT);";
-  private static String verCheck     = "SELECT version FROM version;";
+  private static String verCheck     = "SELECT value FROM version;";
   
   private static int getVersion(Connection conn) throws SQLException {
-    stmt.executeQuery(verTableMake);
+    stmt.execute(verTableMake);
     ResultSet res = stmt.executeQuery(verCheck);
     if (res.next()) {
       return res.getInt(1);
@@ -39,7 +39,7 @@ public class Updater {
     }
   }
   
-  private static String verSet = "UPDATE version SET version = ?";
+  private static String verSet = "UPDATE version SET value = ?";
   
   // The methods below this line all deal with updating config.db
   private static void updateConfig(int from) throws SQLException {
@@ -66,9 +66,9 @@ public class Updater {
     stmt.execute("CREATE TABLE notifications ("
         + "channel LONG PRIMARY KEY ON CONFLICT REPLACE, "
         + "type INT NOT NULL);");
-    stmt.execute("CREATE TABLE variables (" + "name TEXT (1, 21), "
-        + "channel BIGINT, " + "value TEXT NOT NULL, "
-        + "PRIMARY KEY (name, channel) ON CONFLICT REPLACE);");
+    stmt.execute("CREATE TABLE variables (name TEXT (1, 21), "
+        + "server BIGINT, value TEXT NOT NULL, "
+        + "PRIMARY KEY (name, server) ON CONFLICT REPLACE);");
   }
   
   public static Connection getConnection() {

@@ -33,7 +33,7 @@
     <dependency>
       <groupId>net.nixill</groupId>
       <artifactId>DiceCalculator</artifactId>
-      <version>v0.4.2</version>
+      <version>db722c6</version>
     </dependency>
     <dependency>
       <groupId>com.discord4j</groupId>

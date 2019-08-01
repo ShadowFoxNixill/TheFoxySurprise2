@@ -24,12 +24,17 @@ public class Config {
         .executeQuery("SELECT value FROM main WHERE name = 'creator';");
     rs.next();
     creator = Snowflake.of(rs.getLong(1));
+    rs.close();
     
     // Get whether or not the bot is in debug mode (should be yes for PTB
     // and no for the real deal)
     rs = stmt.executeQuery("SELECT value FROM main WHERE name = 'debug';");
     rs.next();
     debug = rs.getBoolean(1);
+    rs.close();
+    
+    // not closing connection because it's also used by the loader
+    stmt.close();
   }
   
   public static boolean isDebug() {
