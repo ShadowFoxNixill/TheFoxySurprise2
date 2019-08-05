@@ -1,5 +1,6 @@
 package net.nixill.dicebot.commands;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +20,8 @@ import net.nixill.dice.objects.DCListExpression;
 import net.nixill.dice.objects.DCOperation;
 import net.nixill.dice.objects.DCValue;
 import net.nixill.dice.objects.Randomizer;
+import net.nixill.dice.operations.FunctionHistory;
+import net.nixill.dice.operations.FunctionHistory.HistoryEntry;
 import net.nixill.dice.operations.Functions;
 import net.nixill.dice.parsing.ExpressionSplitter;
 import net.nixill.dicebot.Config;
@@ -118,9 +121,19 @@ public class RollCommand {
         out += "**" + result.toString() + "**";
       }
       
+      // Let's add history if it was requested
+      if (lev != DebugLevel.NONE) {
+        ArrayList<HistoryEntry> list = FunctionHistory.getList();
+        for (HistoryEntry entry : list) {
+          if (entry.level == 1 || lev == DebugLevel.ALL) {
+            out += "\n" + entry.text;
+          }
+        }
+      }
+      
       // We should also save the results
-      Functions.save2("_ans", result);
       if (!containsLast(rollEnt)) {
+        Functions.save2("_ans", result);
         Functions.save2("_last", rollEnt);
       }
     } catch (UserInputException ex) {
@@ -167,7 +180,8 @@ public class RollCommand {
     
     if (ent instanceof DCFunction) {
       DCFunction func = (DCFunction) ent;
-      if (func.getName().equals("_last")) {
+      if (func.getName().equals("_last")
+          || func.getName().equals("_ans")) {
         return true;
       } else {
         for (DCEntity param : func.getParams()) {
@@ -186,8 +200,6 @@ public class RollCommand {
     } else if (ent instanceof DCOperation) {
       DCOperation oper = (DCOperation) ent;
       return containsLast(oper.getLeft()) || containsLast(oper.getRight());
-    } else {
-      return false;
     }
     
     return false;
