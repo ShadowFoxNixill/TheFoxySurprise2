@@ -18,6 +18,7 @@ import net.nixill.dice.objects.DCFunction;
 import net.nixill.dice.objects.DCList;
 import net.nixill.dice.objects.DCListExpression;
 import net.nixill.dice.objects.DCOperation;
+import net.nixill.dice.objects.DCSingle;
 import net.nixill.dice.objects.DCValue;
 import net.nixill.dice.objects.Randomizer;
 import net.nixill.dice.operations.FunctionHistory;
@@ -114,11 +115,17 @@ public class RollCommand {
       // Let's bold the actual number cause it looks nicer
       if (result instanceof DCList) {
         String res = result.toString(2);
-        int space = res.indexOf(' ');
-        out += "**" + res.substring(0, space) + "**"
-            + res.substring(space);
-      } else {
+        if (res.startsWith("[")) {
+          out += res;
+        } else {
+          int space = res.indexOf(' ');
+          out += "**" + res.substring(0, space) + "**"
+              + res.substring(space);
+        }
+      } else if (result instanceof DCSingle) {
         out += "**" + result.toString() + "**";
+      } else {
+        out += result.toString();
       }
       
       // Let's add history if it was requested
